@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 
 # Create a user profile model
 
@@ -17,4 +18,15 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-    
+# Create profile for each new signup
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        # add new user to profile
+        user_profile = Profile(user=instance)
+        user_profile.save()
+        # Have the user follow themselves
+        user_profile.follows.set([instance.profile.id])
+        # save again once a profile is created then edited
+        user_profile.save()
+
+post_save.connect(create_profile, sender=User)
