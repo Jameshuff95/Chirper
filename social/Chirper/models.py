@@ -13,6 +13,8 @@ class Profile(models.Model):
     # symmetrical means a user can follow a person without requiring the other person follow them back
     # blank means users don't have to follow anyone
     follows = models.ManyToManyField("self", related_name="followed_by", symmetrical=False, blank=True)
+    # Determine the date of last modification
+    date_modified = models.DateTimeField(User, auto_now=True)
 
     # Assign username to user profile in admin
     def __str__(self):
