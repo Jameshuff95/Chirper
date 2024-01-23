@@ -3,4 +3,13 @@
 {% block content %}
     <br>
     <h1>Chirps!</h1>
+
+    {% for chirp in chirps %}
+        <br>
+        <div class="alert alert-dark" role="alert">
+            {{ chirp }}
+        </div>
+        <br>
+    {% endfor %}
+
 {% endblock %}

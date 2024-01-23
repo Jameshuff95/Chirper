@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from .models import Profile 
+from .models import Profile, Chirp
 
 # Unregister Groups
 admin.site.unregister(Group)
@@ -21,3 +21,5 @@ admin.site.unregister(User)
 # Re-register User
 admin.site.register(User, UserAdmin)
 
+# Register Chirps
+admin.site.register(Chirp)
