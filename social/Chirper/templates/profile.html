@@ -9,7 +9,15 @@
                     <h1>{{ profile.user.username }}'s Profile</h1><br>
                     {% if chirps %}
                         {% for chirp in chirps %}
-                            <br><div class="alert alert-dark" role="alert">{{ chirp }}</div><br>
+                            <br>
+                            <div class="alert alert-dark" role="alert">
+                                {{ chirp.body }}
+                                <small class="text-muted">
+                                    ({{ chirp.created_at }}) <br>
+                                    By <a href="{% url 'profile' chirp.user.id %}">@{{ chirp.user.username }}</a>
+                                </small>
+                            </div>
+                            <br>
                         {% endfor %}
                     {% endif %}
                 </div>
