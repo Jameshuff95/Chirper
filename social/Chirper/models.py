@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
 # Create a user profile model
-
 class Profile(models.Model):
     # This associates one user with one profile, in other words, one user can only create one profile 
     # ondelete means if the user is deleted so is the profile
