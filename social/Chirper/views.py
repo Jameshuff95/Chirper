@@ -1,3 +1,5 @@
+""" All comments above each definition appear in order from top to bottom as written """
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Profile, Chirp
@@ -7,6 +9,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 
+
+# chirps shows all the meeps in order of latest to earliest
 def home(request):
     if request.user.is_authenticated:
         form = ChirpForm(request.POST or None)
@@ -17,57 +21,56 @@ def home(request):
                 chirp.save()
                 messages.success(request, ("Your chirp has been posted!"))
                 return redirect('home')
-
-        #show all the meeps in order of latest to earliest
         chirps = Chirp.objects.all().order_by("-created_at")
         return render(request, 'home.html', { "chirps":chirps, "form":form })
     else:
         chirps = Chirp.objects.all().order_by("-created_at")
         return render(request, 'home.html', { "chirps":chirps })
 
+
+# profiles will query the db and put all users on the screen
+# it will also exclude current user from list with exclude()
+# return render() will pass the profiles variables into the page within the {}
 def profile_list(request):
     if request.user.is_authenticated:
-        # Query the db and put all users on the screen
-        # Exclude current user from list with exclude()
         profiles = Profile.objects.exclude(user=request.user)
-        # pass the profiles variables into the page within the {}
         return render(request, 'profile_list.html', {'profiles':profiles})
     else: 
         messages.success(request, ("You must be logged in to view this page"))
         return redirect('home')
 
-# pk means primary key of the user
+
+# pk in profile() means primary key of the user
+# chirps will keep track of your own chirps on profile
+# current_user_profile gets current user
+# action gets form data
+# if action: means to decide to follow or unfollow
 def profile(request, pk):
     if request.user.is_authenticated:
         profile = Profile.objects.get(user_id=pk)
-        # keep track of your own chirps on profile
         chirps = Chirp.objects.filter(user_id=pk).order_by("-created_at")
-        # Post form logic
         if request.method == "POST":
-            # Get current user
             current_user_profile = request.user.profile
-            # Get form data
             action = request.POST['follow']
-            # Decide to follow or unfollow
             if action == "unfollow":
                 current_user_profile.follows.remove(profile)
             elif action == "follow":
                 current_user_profile.follows.add(profile)
-            # Save the profile
             current_user_profile.save()
         return render(request, 'profile.html', {'profile':profile, "chirps":chirps})
     else:
         messages.success(request, ("You must be logged in to view this page."))
         return redirect('home')
 
+
+# if the form is filled out and posted
+# get the username the user types
+# username/password are affiliated with the login form field name
+# user figures out which user is logging in
 def login_user(request):
-    # if the form is filled out and posted
-    # get the username the user types
     if request.method == "POST":
-        # username/password are affiliated with the login form field name
         username = request.POST['username']
         password = request.POST['password']
-        # figure out which user is loging in
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
@@ -85,6 +88,7 @@ def logout_user(request):
     messages.success(request, ("You have been logged out!"))
     return redirect('home')
 
+# user logs in the user
 def register_user(request):
     form = SignUpForm()
     if request.method == "POST":
@@ -93,7 +97,6 @@ def register_user(request):
             form.save()
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
-            # Login user
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.success(request, ("You have successfully registered!"))
@@ -113,4 +116,3 @@ def update_user(request):
     else:
         messages.success(request, ("You must be logged in to view this page!"))
         return redirect('login')
-
