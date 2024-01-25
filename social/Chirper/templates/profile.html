@@ -1,19 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
+
     {% if profile %}
         <div class="container text-center">
             <div class="row">
                 <div class="col-8">
-                    <h1>{{ profile.user.username }}'s Profile</h1><br>
+                    <h1>{{ profile.user.username }}'s profile</h1><br>
                     {% if chirps %}
                         {% for chirp in chirps %}
                             <br>
                             <div class="alert alert-dark" role="alert">
-                                {{ chirp.body }}
-                                <small class="text-muted">
-                                    ({{ chirp.created_at }}) <br>
-                                    By <a href="{% url 'profile' chirp.user.id %}">@{{ chirp.user.username }}</a>
-                                </small>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            {% if profile.profile_image %}
+                                                <img src="{{ profile.profile_image.url }}" width="100" height="100" alt="{{ profile.user.usersname }}" class="image-fluid rounded-circle"/>
+                                            {% else %}
+                                                <img src="{% static 'images/generic-user-icon-12.jpg' %}" width="100" height="100" alt="{{ profile.user.username }}" class="image-fluid rounded-circle"/>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-10" style="display: grid; place-items: center;">
+                                            {{ chirp.body }}
+                                            <small class="text-muted">
+                                                ({{ chirp.created_at }}) <br>
+                                                By <a href="{% url 'profile' chirp.user.id %}">@{{ chirp.user.username }}</a>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <br>
                         {% endfor %}
@@ -22,8 +37,9 @@
                 <div class="col-4">
                     <br><br><br><br>
                     {% if profile.profile_image %}
-                        <img src="{{ profile.profile_image.url }}" />
+                        <img class="rounded-circle" src="{{ profile.profile_image.url }}" width="225" height="225" />
                     {% endif %}
+                    <br><br>
                     <div class="card">
                         <h5 class="card-header">Follows</h5>
                         <div class="card-body">
